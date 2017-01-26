@@ -1,0 +1,778 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="javascript,nodejs,ecmascript6,react,reactrouter,webpack," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="系列链接:1.React版博客系列1–基础说明与标签组件2.React版博客系列2–分页组件设计
+先上demo本系列源码: blog_react数据服务: blog_api线上预览: http://react.nullcn.com">
+<meta property="og:type" content="article">
+<meta property="og:title" content="React版博客系列2--分页组件设计">
+<meta property="og:url" content="https://yoursite.com/2016/03/blog-react-pagination/index.html">
+<meta property="og:site_name" content="Null's Blog">
+<meta property="og:description" content="系列链接:1.React版博客系列1–基础说明与标签组件2.React版博客系列2–分页组件设计
+先上demo本系列源码: blog_react数据服务: blog_api线上预览: http://react.nullcn.com">
+<meta property="og:updated_time" content="2017-01-26T13:00:07.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="React版博客系列2--分页组件设计">
+<meta name="twitter:description" content="系列链接:1.React版博客系列1–基础说明与标签组件2.React版博客系列2–分页组件设计
+先上demo本系列源码: blog_react数据服务: blog_api线上预览: http://react.nullcn.com">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://yoursite.com/2016/03/blog-react-pagination/"/>
+
+
+
+
+
+  <title> React版博客系列2--分页组件设计 | Null's Blog </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?0b07173910630daf1ef8a0112517b498";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">Null's Blog</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+    
+      <p class="site-subtitle"></p>
+    
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+  <link itemprop="mainEntityOfPage" href="https://yoursite.com/2016/03/blog-react-pagination/">
+
+  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="null -_-">
+    <meta itemprop="description" content="">
+    <meta itemprop="image" content="/uploads/avatar.png">
+  </span>
+
+  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="name" content="Null's Blog">
+    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+      <img style="display:none;" itemprop="url image" alt="Null's Blog" src="">
+    </span>
+  </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                React版博客系列2--分页组件设计
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2016-03-01T14:52:36+08:00">
+                2016-03-01
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/javascript/" itemprop="url" rel="index">
+                    <span itemprop="name">javascript</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2016/03/blog-react-pagination/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/03/blog-react-pagination/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="系列链接"><a href="#系列链接" class="headerlink" title="系列链接:"></a>系列链接:</h1><p>1.<a href="/2016/2/blog-react-basic">React版博客系列1–基础说明与标签组件</a><br>2.<a href="/2016/2/blog-react-pagination">React版博客系列2–分页组件设计</a></p>
+<h1 id="先上demo"><a href="#先上demo" class="headerlink" title="先上demo"></a>先上demo</h1><p>本系列源码: <a href="https://github.com/mywei1989/blog_react" target="_blank" rel="external">blog_react</a><br>数据服务: <a href="https://github.com/mywei1989/blog_api" target="_blank" rel="external">blog_api</a><br>线上预览: <a href="http://react.nullcn.com" target="_blank" rel="external">http://react.nullcn.com</a><br><a id="more"></a></p>
+<h1 id="接上篇"><a href="#接上篇" class="headerlink" title="接上篇"></a>接上篇</h1><p>本来打算写Archive组件的，不过考虑到Archive组件跟Tags组件其实就是换汤不换药，这种如果单独开一篇来讲，这系列水就深了。<br>通常来说，分页除了渲染（比如页码如何显示）之外，几乎不需要什么功能，当然在考虑到分页空间一般从属于某个列表，也就是说需要当前页（必须），总页数（非必须），在放到特定的业务里，比如需要分页组件记录并使用分页前缀（~/tag/javascript）。另外，分页组件如果需要单独使用，则还需要通知上层组件，所以会有个事件通讯，当然，本博客内的分页组件具备该功能但并未使用，原因另说。先看代码：<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//https://github.com/mywei1989/blog_react/blob/master/assets/blog/js/Pagination.js</span></div><div class="line">  <span class="keyword">constructor</span>(props)&#123;</div><div class="line">    <span class="keyword">super</span>(props);</div><div class="line"></div><div class="line">    <span class="keyword">let</span> pageIndex = props.pageIndex||<span class="number">1</span>;</div><div class="line">    <span class="keyword">let</span> pageCount = props.pageCount||<span class="number">1</span>;</div><div class="line">    <span class="keyword">let</span> prefix = props.prefix||<span class="string">'/'</span>;</div><div class="line">    <span class="keyword">this</span>.state=&#123;</div><div class="line">      <span class="attr">pageIndex</span>:pageIndex,</div><div class="line">      <span class="attr">pageCount</span>:pageCount,</div><div class="line">      <span class="attr">prefix</span>:prefix</div><div class="line">    &#125;</div><div class="line">  &#125;</div></pre></td></tr></table></figure></p>
+<p>这里很好理解，定义改组件的构造函数，并默认设置了3个参数。</p>
+<p>该方法为react内置方法，作用为”已加载组件收到新的参数时调用”，因为上层组件（列表）如果因为某种原因触发了render，则可能调用该方法，重置3个默认值。这里顺带提一句，props与state的区别：由于props和state都用于描述组件的特性，可能会产生混淆。一个简单的区分方法是，props表示那些一旦定义，就不再改变的特性，而state是会随着用户互动而产生变化的特性。在调用setState时，react会自动触发render事件。<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//https://github.com/mywei1989/blog_react/blob/master/assets/blog/js/Pagination.js</span></div><div class="line">componentWillReceiveProps(nextProps)&#123;</div><div class="line">    <span class="keyword">this</span>.setState(&#123;</div><div class="line">      <span class="attr">pageIndex</span>:nextProps.pageIndex,</div><div class="line">      <span class="attr">pageCount</span>:nextProps.pageCount,</div><div class="line">      <span class="attr">prefix</span>:nextProps.prefix</div><div class="line">    &#125;);</div><div class="line">  &#125;</div></pre></td></tr></table></figure></p>
+<p>通知上层组件的接口<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">_handleChange(pageIndex)&#123;</div><div class="line">    <span class="keyword">this</span>.props.onChange(pageIndex);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>最后是render方法，该方法这么多完全是我想实现一套自己的展示方式，即根据pageCount与pageIndex不同，根据自己需要的逻辑渲染出不一样的分页效果：<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div></pre></td><td class="code"><pre><div class="line">render()&#123;</div><div class="line"></div><div class="line">    <span class="keyword">let</span> pageHtml=[];</div><div class="line">    <span class="keyword">if</span>(<span class="keyword">this</span>.props.pageIndex&gt;<span class="number">1</span>)&#123;</div><div class="line">      <span class="keyword">if</span>(<span class="keyword">this</span>.props.pageIndex<span class="number">-1</span>===<span class="number">1</span>)&#123;</div><div class="line">        pageHtml.push(<span class="xml"><span class="tag">&lt;<span class="name">a</span> <span class="attr">className</span>=<span class="string">"extend prev"</span> <span class="attr">rel</span>=<span class="string">"prev"</span> <span class="attr">href</span>=<span class="string">&#123;this.props.prefix+</span>"/"&#125; <span class="attr">key</span>=<span class="string">"«"</span>&gt;</span>«<span class="tag">&lt;/<span class="name">a</span>&gt;</span></span>);</div><div class="line">      &#125;<span class="keyword">else</span>&#123;</div><div class="line">        pageHtml.push(<span class="xml"><span class="tag">&lt;<span class="name">a</span> <span class="attr">className</span>=<span class="string">"extend prev"</span> <span class="attr">rel</span>=<span class="string">"prev"</span> <span class="attr">href</span>=<span class="string">&#123;this.props.prefix+</span>"/<span class="attr">page</span>/"+(<span class="attr">this.props.pageIndex-1</span>)+"/"&#125; <span class="attr">key</span>=<span class="string">"«"</span>&gt;</span>«<span class="tag">&lt;/<span class="name">a</span>&gt;</span></span>);</div><div class="line">      &#125;</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">if</span>(<span class="keyword">this</span>.props.pageIndex===<span class="number">2</span>)&#123;</div><div class="line">      pageHtml.push(<span class="xml"><span class="tag">&lt;<span class="name">a</span> <span class="attr">className</span>=<span class="string">"page-number"</span> <span class="attr">href</span>=<span class="string">&#123;this.props.prefix+</span>"/"&#125; <span class="attr">key</span>=<span class="string">"1"</span>&gt;</span>1<span class="tag">&lt;/<span class="name">a</span>&gt;</span></span>);</div><div class="line">    &#125;<span class="keyword">else</span> <span class="keyword">if</span>(<span class="keyword">this</span>.props.pageIndex===<span class="number">3</span>)&#123;</div><div class="line">      pageHtml.push(<span class="xml"><span class="tag">&lt;<span class="name">a</span> <span class="attr">className</span>=<span class="string">"page-number"</span> <span class="attr">href</span>=<span class="string">&#123;this.props.prefix+</span>"/"&#125; <span class="attr">key</span>=<span class="string">"1"</span>&gt;</span>1<span class="tag">&lt;/<span class="name">a</span>&gt;</span></span>);</div><div class="line">      pageHtml.push(<span class="xml"><span class="tag">&lt;<span class="name">a</span> <span class="attr">className</span>=<span class="string">"page-number"</span> <span class="attr">href</span>=<span class="string">&#123;this.props.prefix+</span>"/<span class="attr">page</span>/<span class="attr">2</span>/"&#125; <span class="attr">key</span>=<span class="string">"2"</span>&gt;</span>2<span class="tag">&lt;/<span class="name">a</span>&gt;</span></span>);</div><div class="line">    &#125;<span class="keyword">else</span> <span class="keyword">if</span>(<span class="keyword">this</span>.props.pageIndex===<span class="number">4</span>)&#123;</div><div class="line">      pageHtml.push(<span class="xml"><span class="tag">&lt;<span class="name">a</span> <span class="attr">className</span>=<span class="string">"page-number"</span> <span class="attr">href</span>=<span class="string">"/"</span> <span class="attr">key</span>=<span class="string">"1"</span>&gt;</span>1<span class="tag">&lt;/<span class="name">a</span>&gt;</span></span>);</div><div class="line">      pageHtml.push(<span class="xml"><span class="tag">&lt;<span class="name">a</span> <span class="attr">className</span>=<span class="string">"page-number"</span> <span class="attr">href</span>=<span class="string">&#123;this.props.prefix+</span>"/<span class="attr">page</span>/<span class="attr">2</span>/" &#125; <span class="attr">key</span>=<span class="string">"2"</span>&gt;</span>2<span class="tag">&lt;/<span class="name">a</span>&gt;</span></span>);</div><div class="line">      pageHtml.push(<span class="xml"><span class="tag">&lt;<span class="name">a</span> <span class="attr">className</span>=<span class="string">"page-number"</span> <span class="attr">href</span>=<span class="string">&#123;this.props.prefix+</span>"/<span class="attr">page</span>/<span class="attr">3</span>/" &#125; <span class="attr">key</span>=<span class="string">"3"</span>&gt;</span>3<span class="tag">&lt;/<span class="name">a</span>&gt;</span></span>);</div><div class="line">    &#125;<span class="keyword">else</span> <span class="keyword">if</span>(<span class="keyword">this</span>.props.pageIndex===<span class="number">5</span>)&#123;</div><div class="line">      pageHtml.push(<span class="xml"><span class="tag">&lt;<span class="name">a</span> <span class="attr">className</span>=<span class="string">"page-number"</span> <span class="attr">href</span>=<span class="string">"/"</span> <span class="attr">key</span>=<span class="string">"1"</span>&gt;</span>1<span class="tag">&lt;/<span class="name">a</span>&gt;</span></span>);</div><div class="line">      pageHtml.push(<span class="xml"><span class="tag">&lt;<span class="name">span</span> <span class="attr">className</span>=<span class="string">"space"</span> <span class="attr">key</span>=<span class="string">"..."</span>&gt;</span>…<span class="tag">&lt;/<span class="name">span</span>&gt;</span></span>);</div><div class="line">      <span class="keyword">for</span>(<span class="keyword">let</span> i=<span class="keyword">this</span>.props.pageIndex<span class="number">-2</span>;i&lt;<span class="keyword">this</span>.props.pageIndex;i++)&#123;</div><div class="line">        pageHtml.push(<span class="xml"><span class="tag">&lt;<span class="name">a</span> <span class="attr">className</span>=<span class="string">"page-number"</span> <span class="attr">href</span>=<span class="string">&#123;this.props.prefix+</span>"/<span class="attr">page</span>/"+<span class="attr">i</span>+"/" &#125; <span class="attr">key</span>=<span class="string">&#123;i&#125;</span>&gt;</span>&#123;i&#125;<span class="tag">&lt;/<span class="name">a</span>&gt;</span></span>);</div><div class="line">      &#125; </div><div class="line">    &#125;</div><div class="line">    pageHtml.push(<span class="xml"><span class="tag">&lt;<span class="name">span</span> <span class="attr">className</span>=<span class="string">"page-number current"</span> <span class="attr">key</span>=<span class="string">&#123;this.props.pageIndex&#125;</span> <span class="attr">key</span>=<span class="string">&#123;this.props.pageIndex&#125;</span>&gt;</span>&#123;this.props.pageIndex&#125;<span class="tag">&lt;/<span class="name">span</span>&gt;</span></span>);</div><div class="line">    <span class="keyword">if</span>(<span class="keyword">this</span>.props.pageCount - <span class="keyword">this</span>.props.pageIndex &gt;= <span class="number">4</span>)&#123;</div><div class="line">      pageHtml.push(<span class="xml"><span class="tag">&lt;<span class="name">a</span> <span class="attr">className</span>=<span class="string">"page-number"</span> <span class="attr">href</span>=<span class="string">&#123;this.props.prefix+</span>"/<span class="attr">page</span>/"+(<span class="attr">this.props.pageIndex</span>+<span class="attr">1</span>)+"/"&#125; <span class="attr">key</span>=<span class="string">&#123;this.props.pageIndex+1&#125;</span> <span class="attr">key</span>=<span class="string">&#123;this.props.pageIndex+1&#125;</span> &gt;</span>&#123;this.props.pageIndex+1&#125;<span class="tag">&lt;/<span class="name">a</span>&gt;</span></span>);</div><div class="line">      pageHtml.push(<span class="xml"><span class="tag">&lt;<span class="name">a</span> <span class="attr">className</span>=<span class="string">"page-number"</span> <span class="attr">href</span>=<span class="string">&#123;this.props.prefix+</span>"/<span class="attr">page</span>/"+(<span class="attr">this.props.pageIndex</span>+<span class="attr">2</span>)+"/"&#125; <span class="attr">key</span>=<span class="string">&#123;this.props.pageIndex+2&#125;</span> <span class="attr">key</span>=<span class="string">&#123;this.props.pageIndex+2&#125;</span> &gt;</span>&#123;this.props.pageIndex+2&#125;<span class="tag">&lt;/<span class="name">a</span>&gt;</span></span>);</div><div class="line">      pageHtml.push(<span class="xml"><span class="tag">&lt;<span class="name">span</span> <span class="attr">className</span>=<span class="string">"space"</span> <span class="attr">key</span>=<span class="string">"..."</span>&gt;</span>…<span class="tag">&lt;/<span class="name">span</span>&gt;</span></span>);</div><div class="line">      pageHtml.push(<span class="xml"><span class="tag">&lt;<span class="name">a</span> <span class="attr">className</span>=<span class="string">"page-number"</span> <span class="attr">href</span>=<span class="string">&#123;this.props.prefix+</span>"/<span class="attr">page</span>/"+<span class="attr">this.props.pageCount</span>+"/"&#125; <span class="attr">key</span>=<span class="string">&#123;this.props.pageCount&#125;</span>&gt;</span>&#123;this.props.pageCount&#125;<span class="tag">&lt;/<span class="name">a</span>&gt;</span></span>);</div><div class="line">    &#125;<span class="keyword">else</span>&#123;</div><div class="line">      <span class="keyword">for</span>(<span class="keyword">let</span> i=<span class="keyword">this</span>.props.pageIndex+<span class="number">1</span>;i&lt;=<span class="keyword">this</span>.props.pageCount;i++)&#123;</div><div class="line">        pageHtml.push(<span class="xml"><span class="tag">&lt;<span class="name">a</span> <span class="attr">className</span>=<span class="string">"page-number"</span> <span class="attr">href</span>=<span class="string">&#123;this.props.prefix+</span>"/<span class="attr">page</span>/"+<span class="attr">i</span>+"/"&#125; <span class="attr">key</span>=<span class="string">&#123;i&#125;</span>&gt;</span>&#123;i&#125;<span class="tag">&lt;/<span class="name">a</span>&gt;</span></span>);</div><div class="line">      &#125;</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">if</span>(<span class="keyword">this</span>.props.pageIndex!==<span class="keyword">this</span>.props.pageCount)&#123;</div><div class="line">      pageHtml.push(<span class="xml"><span class="tag">&lt;<span class="name">a</span> <span class="attr">className</span>=<span class="string">"extend next"</span> <span class="attr">rel</span>=<span class="string">"next"</span> <span class="attr">href</span>=<span class="string">&#123;this.props.prefix+</span>"/<span class="attr">page</span>/"+(<span class="attr">this.props.pageIndex</span>+<span class="attr">1</span>)+"/"&#125; <span class="attr">key</span>=<span class="string">"»"</span>&gt;</span>»<span class="tag">&lt;/<span class="name">a</span>&gt;</span></span>);</div><div class="line">    &#125;</div><div class="line"></div><div class="line"></div><div class="line">    <span class="keyword">return</span>(</div><div class="line">     <span class="xml"><span class="tag">&lt;<span class="name">div</span> <span class="attr">className</span>=<span class="string">"archive-pagination"</span>&gt;</span></span></div><div class="line">        <span class="tag">&lt;<span class="name">div</span> <span class="attr">className</span>=<span class="string">"paginator"</span>&gt;</span></div><div class="line">        &#123;pageHtml&#125;</div><div class="line">        <span class="tag">&lt;/<span class="name">div</span>&gt;</span></div><div class="line">      <span class="tag">&lt;/<span class="name">div</span>&gt;</span></div><div class="line">    )</div><div class="line">  &#125;</div></pre></td></tr></table></figure></p>
+<h1 id="render方法里为何没有使用-handleChange方法？"><a href="#render方法里为何没有使用-handleChange方法？" class="headerlink" title="render方法里为何没有使用_handleChange方法？"></a>render方法里为何没有使用_handleChange方法？</h1><p>因为出于全局的考虑，并不打算通知上层翻页，而是通过更上层的react-router方式，这里附上使用通知上层的方法与调用方式：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//上层组件</span></div><div class="line">&lt;Pagination onChange=&#123;<span class="keyword">this</span>.onChange&#125; pageIndex=&#123;<span class="keyword">this</span>.state.pageIndex&#125; pageCount=&#123;<span class="keyword">this</span>.state.pageCount&#125; prefix=&#123;<span class="keyword">this</span>.state.prefix&#125; /&gt;</div><div class="line"></div><div class="line"></div><div class="line"><span class="comment">//Pagination.js</span></div><div class="line">render()&#123;</div><div class="line">   <span class="keyword">return</span> (</div><div class="line">    <span class="xml"><span class="tag">&lt;<span class="name">a</span> <span class="attr">className</span>=<span class="string">"page-number"</span> <span class="attr">href</span>=<span class="string">"#"</span> <span class="attr">onClick</span>=<span class="string">&#123;this._handleChange(3)&#125;</span>&gt;</span>3<span class="tag">&lt;/<span class="name">a</span>&gt;</span></span></div><div class="line">   );</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>当然，我们还可以扩展一下，比如上一页：<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">_prev()&#123;</div><div class="line">  <span class="keyword">if</span>(<span class="keyword">this</span>.state.pageIndex&gt;<span class="number">1</span>)&#123;</div><div class="line">    <span class="keyword">this</span>._handleChange(<span class="keyword">this</span>.state.pageIndex<span class="number">-1</span>);</div><div class="line">  &#125;<span class="keyword">else</span>&#123;</div><div class="line">    <span class="keyword">this</span>._handleChange(<span class="number">1</span>);</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>如果想定制不同的风格,比如分页省略号的位置等等，可以使用上层组件，通过props方式传递给分页组件。<br>当然，分页组件也不限定使用a标签，其他的标签一样可以。</p>
+<h1 id="下篇预告"><a href="#下篇预告" class="headerlink" title="下篇预告"></a>下篇预告</h1><p>下篇的内容将会是引入react-router，并对react-router做一些必要的说明，可能是本系列最重要的一篇，基于react-router将该博客构建成SPA的页面。之后，会改造工程结构，开发Article（文章）组件并将他们组合起来。<br>现在可以直接看看目前本人react博客的线上效果：<br><a href="http://react.nullcn.com" target="_blank" rel="external">http://react.nullcn.com</a></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/javascript/" rel="tag"># javascript</a>
+          
+            <a href="/tags/nodejs/" rel="tag"># nodejs</a>
+          
+            <a href="/tags/ecmascript6/" rel="tag"># ecmascript6</a>
+          
+            <a href="/tags/react/" rel="tag"># react</a>
+          
+            <a href="/tags/reactrouter/" rel="tag"># reactrouter</a>
+          
+            <a href="/tags/webpack/" rel="tag"># webpack</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/02/blog-react-basic/" rel="next" title="React版博客系列1--基础说明与标签组件">
+                <i class="fa fa-chevron-left"></i> React版博客系列1--基础说明与标签组件
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/03/blog-react-router/" rel="prev" title="React版博客系列3--路由系统">
+                React版博客系列3--路由系统 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+          
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/03/blog-react-pagination/"
+           data-title="React版博客系列2--分页组件设计" data-url="https://yoursite.com/2016/03/blog-react-pagination/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/uploads/avatar.png"
+               alt="null -_-" />
+          <p class="site-author-name" itemprop="name">null -_-</p>
+          <p class="site-description motion-element" itemprop="description">浮世梦中梦 布衣才不才</p>
+        </div>
+        <nav class="site-state motion-element">
+        
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">33</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-categories">
+              
+                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-name">分类</span>
+              
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">33</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/mywei1989" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://git.oschina.net/mywei1989" target="_blank" title="GitOSC">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitOSC
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://twitter.com/mywei1989" target="_blank" title="Twitter">
+                  
+                    <i class="fa fa-fw fa-twitter"></i>
+                  
+                  Twitter
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://www.zhihu.com/people/lin-zhi-wei-92" target="_blank" title="zhihu">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  zhihu
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#系列链接"><span class="nav-number">1.</span> <span class="nav-text">系列链接:</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#先上demo"><span class="nav-number">2.</span> <span class="nav-text">先上demo</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#接上篇"><span class="nav-number">3.</span> <span class="nav-text">接上篇</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#render方法里为何没有使用-handleChange方法？"><span class="nav-number">4.</span> <span class="nav-text">render方法里为何没有使用_handleChange方法？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#下篇预告"><span class="nav-number">5.</span> <span class="nav-text">下篇预告</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2012 - 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">null -_-</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.0"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"nullcn"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    
+    <script src="/lib/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+</body>
+</html>

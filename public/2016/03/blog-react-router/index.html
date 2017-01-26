@@ -1,0 +1,786 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="javascript,nodejs,ecmascript6,react,reactrouter,webpack," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="系列链接:1.React版博客系列1–基础说明与标签组件2.React版博客系列2–分页组件设计3.React版博客系列3–路由系统
+先上demo本系列源码: blog_react数据服务: blog_api线上预览: https://react.nullcn.com
+接上篇 react-router简介现在我们引入 react-router 。用过类似 router ，比如 MVVM 框架 an">
+<meta property="og:type" content="article">
+<meta property="og:title" content="React版博客系列3--路由系统">
+<meta property="og:url" content="https://yoursite.com/2016/03/blog-react-router/index.html">
+<meta property="og:site_name" content="Null's Blog">
+<meta property="og:description" content="系列链接:1.React版博客系列1–基础说明与标签组件2.React版博客系列2–分页组件设计3.React版博客系列3–路由系统
+先上demo本系列源码: blog_react数据服务: blog_api线上预览: https://react.nullcn.com
+接上篇 react-router简介现在我们引入 react-router 。用过类似 router ，比如 MVVM 框架 an">
+<meta property="og:image" content="https://ued.fanxing.com/content/images/2016/03/blog_react_router.gif">
+<meta property="og:updated_time" content="2017-01-26T13:00:07.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="React版博客系列3--路由系统">
+<meta name="twitter:description" content="系列链接:1.React版博客系列1–基础说明与标签组件2.React版博客系列2–分页组件设计3.React版博客系列3–路由系统
+先上demo本系列源码: blog_react数据服务: blog_api线上预览: https://react.nullcn.com
+接上篇 react-router简介现在我们引入 react-router 。用过类似 router ，比如 MVVM 框架 an">
+<meta name="twitter:image" content="https://ued.fanxing.com/content/images/2016/03/blog_react_router.gif">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://yoursite.com/2016/03/blog-react-router/"/>
+
+
+
+
+
+  <title> React版博客系列3--路由系统 | Null's Blog </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?0b07173910630daf1ef8a0112517b498";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">Null's Blog</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+    
+      <p class="site-subtitle"></p>
+    
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+  <link itemprop="mainEntityOfPage" href="https://yoursite.com/2016/03/blog-react-router/">
+
+  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="null -_-">
+    <meta itemprop="description" content="">
+    <meta itemprop="image" content="/uploads/avatar.png">
+  </span>
+
+  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="name" content="Null's Blog">
+    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+      <img style="display:none;" itemprop="url image" alt="Null's Blog" src="">
+    </span>
+  </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                React版博客系列3--路由系统
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2016-03-28T14:27:04+08:00">
+                2016-03-28
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/javascript/" itemprop="url" rel="index">
+                    <span itemprop="name">javascript</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2016/03/blog-react-router/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/03/blog-react-router/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="系列链接"><a href="#系列链接" class="headerlink" title="系列链接:"></a>系列链接:</h1><p>1.<a href="/2016/2/blog-react-basic">React版博客系列1–基础说明与标签组件</a><br>2.<a href="/2016/3/blog-react-pagination">React版博客系列2–分页组件设计</a><br>3.<a href="/2016/3/blog-react-router">React版博客系列3–路由系统</a></p>
+<h1 id="先上demo"><a href="#先上demo" class="headerlink" title="先上demo"></a>先上demo</h1><p>本系列源码: <a href="https://github.com/mywei1989/blog_react" target="_blank" rel="external">blog_react</a><br>数据服务: <a href="https://github.com/mywei1989/blog_api" target="_blank" rel="external">blog_api</a><br>线上预览: <a href="https://react.nullcn.com" target="_blank" rel="external">https://react.nullcn.com</a></p>
+<h1 id="接上篇-react-router简介"><a href="#接上篇-react-router简介" class="headerlink" title="接上篇 react-router简介"></a>接上篇 react-router简介</h1><p>现在我们引入 <a href="https://github.com/reactjs/react-router" target="_blank" rel="external">react-router</a> 。用过类似 router ，比如 MVVM 框架 angular-router 等 router 的，都已经大致了解 router 会提供哪些相应的功能。<br>总的来说， react-router 是一个基于 React 之上的强大路由库，它可以让你向应用中快速地添加视图和数据流，同时保持页面与 URL 间的同步。<br><a id="more"></a></p>
+<h2 id="嵌套关系"><a href="#嵌套关系" class="headerlink" title="嵌套关系"></a>嵌套关系</h2><p>react-router 使用路由嵌套的概念来让你定义view的嵌套集合，当一个给定的URL被调用时，整个集合中（命中的部分）都会被渲染。嵌套路由被描述成一种树形结构。 react-router 会深度优先遍历整个理由配置来寻找一个与给定的 URL 相匹配的路由。</p>
+<h2 id="路径语法"><a href="#路径语法" class="headerlink" title="路径语法"></a>路径语法</h2><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//匹配 /tag/javascript 和 /tag/nodejs</span></div><div class="line">&lt;Route path=<span class="string">"/tag/:tag"</span> component=&#123;ArticleList&#125; /&gt;  </div><div class="line"><span class="comment">//匹配 /tag/hello.jpg 和 /tag/path/to/hello.jpg	</span></div><div class="line">&lt;Route path=<span class="string">"/tag/*.*"</span> /&gt; </div><div class="line"><span class="comment">//匹配 /tag, /tag/javascript 和 /tag/nodejs</span></div><div class="line">&lt;Route path=<span class="string">"/tag(/:tag)"</span> component=&#123;ArticleList&#125; /&gt;</div><div class="line"><span class="xml"><span class="tag">&lt;<span class="name">Route</span> <span class="attr">path</span>=<span class="string">"tag"</span> <span class="attr">component</span>=<span class="string">&#123;ArticleList&#125;</span>&gt;</span></span></div><div class="line">  //匹配 /tag/javascript/page/1</div><div class="line">  <span class="tag">&lt;<span class="name">Route</span> <span class="attr">path</span>=<span class="string">"/:tag/page/:pageIndex"</span> <span class="attr">component</span>=<span class="string">&#123;ArticleList&#125;</span> /&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">Route</span>&gt;</span></div></pre></td></tr></table></figure>
+<h2 id="优先级"><a href="#优先级" class="headerlink" title="优先级"></a>优先级</h2><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//先定义 先匹配 没有路由传递</span></div><div class="line">&lt;Route path=<span class="string">"/tag/:tag"</span> component=&#123;ArticleList&#125; to=&#123;&#123;<span class="attr">queryType</span>:<span class="string">'tag'</span>&#125;&#125;/&gt;</div><div class="line"><span class="comment">//如果这行在前面,就不会 匹配到 /tag/javascript这种了 因为tag这个确定的单词被当作:year了</span></div><div class="line">&lt;Route path=<span class="string">"/:year/:month"</span> component=&#123;ArticleList&#125; to=&#123;&#123;<span class="attr">queryType</span>:<span class="string">'archive'</span>&#125;&#125;/&gt;</div></pre></td></tr></table></figure>
+<h2 id="关于History"><a href="#关于History" class="headerlink" title="关于History"></a>关于History</h2><p>本博客暂不打算使用 History,而是使用 nginx 配置 urlwrite ,之后由 react-router 自身去获取 url 实现跳转 </p>
+<h2 id="react-router本博客形态（SPA）的基石，可以想象成整个工程的构建骨架，数据流为"><a href="#react-router本博客形态（SPA）的基石，可以想象成整个工程的构建骨架，数据流为" class="headerlink" title="react-router本博客形态（SPA）的基石，可以想象成整个工程的构建骨架，数据流为:"></a>react-router本博客形态（SPA）的基石，可以想象成整个工程的构建骨架，数据流为:</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">/-&gt;react-router-&gt;ArticleList                      //默认第1页</div><div class="line">page.pageindex-&gt;react-router-&gt;ArticleList         //默认第pageindex页</div><div class="line">tag-&gt;react-router-&gt;ArticleList                    //tagName 默认第1页</div><div class="line">tag.pageindex-&gt;react-router-&gt;ArticleList          //tagName 默认第pageindex页</div><div class="line">archive-&gt;react-router-&gt;ArticleList                //archive 默认第1页</div><div class="line">archive.pageindex-&gt;react-router-&gt;ArticleList	 //archive 默认第pageindex页</div></pre></td></tr></table></figure>
+<h2 id="参数传递"><a href="#参数传递" class="headerlink" title="参数传递"></a>参数传递</h2><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//文章列表组件根据queryType 查询tag列表</span></div><div class="line">&lt;Route path=<span class="string">"/tag/:tag"</span> component=&#123;ArticleList&#125; to=&#123;&#123;<span class="attr">queryType</span>:<span class="string">'tag'</span>&#125;&#125;/&gt;</div><div class="line"><span class="comment">//文章列表组件根据queryType 查询archive列表</span></div><div class="line">&lt;Route path=<span class="string">"/:year/:month"</span> component=&#123;ArticleList&#125; to=&#123;&#123;<span class="attr">queryType</span>:<span class="string">'archive'</span>&#125;&#125;/&gt;</div></pre></td></tr></table></figure>
+<h1 id="具体配置"><a href="#具体配置" class="headerlink" title="具体配置"></a>具体配置</h1><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//	~/index.js</span></div><div class="line">render((</div><div class="line">	&lt;Router history=&#123;browserHistory&#125;&gt;</div><div class="line">    &lt;Route path="/" component=&#123;App&#125;&gt;</div><div class="line">      &lt;IndexRoute component=&#123;ArticleList&#125; to=&#123;&#123;queryType:'/'&#125;&#125;/&gt;</div><div class="line">      &lt;Route path="/page/:pageIndex" component=&#123;ArticleList&#125; to=&#123;&#123;queryType:'/'&#125;&#125;/&gt;</div><div class="line">      &lt;Route path="/tag/:tag" component=&#123;ArticleList&#125; to=&#123;&#123;queryType:'tag'&#125;&#125;/&gt;</div><div class="line">      &lt;Route path="/tag/:tag/" component=&#123;ArticleList&#125; to=&#123;&#123;queryType:'tag'&#125;&#125;/&gt;</div><div class="line">      &lt;Route path="/tag/:tag/page/:pageIndex" component=&#123;ArticleList&#125; to=&#123;&#123;queryType:'tag'&#125;&#125;/&gt;</div><div class="line">      &lt;Route path="/tag/:tag/page/:pageIndex/" component=&#123;ArticleList&#125; to=&#123;&#123;queryType:'tag'&#125;&#125;/&gt;</div><div class="line">      &lt;Route path="/:year/:month" component=&#123;ArticleList&#125; to=&#123;&#123;queryType:'archive'&#125;&#125;/&gt;</div><div class="line">      &lt;Route path="/:year/:month/" component=&#123;ArticleList&#125; to=&#123;&#123;queryType:'archive'&#125;&#125;/&gt;</div><div class="line">      &lt;Route path="/:year/:month/page/:pageIndex" component=&#123;ArticleList&#125; to=&#123;&#123;queryType:'archive'&#125;&#125;/&gt;</div><div class="line">      &lt;Route path="/:year/:month/page/:pageIndex/" component=&#123;ArticleList&#125; to=&#123;&#123;queryType:'archive'&#125;&#125;/&gt;</div><div class="line">      &lt;Route path="/:year/:month/:name" component=&#123;Article&#125; to=&#123;&#123;queryType:'article'&#125;&#125; /&gt;</div><div class="line">    &lt;/Route&gt;</div><div class="line">  &lt;/Router&gt;</div><div class="line">),document.getElementById('root'));</div></pre></td></tr></table></figure>
+<p>#web容器urlwrite配置 这里以nginx为例<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">server &#123;</div><div class="line">	listen      80;</div><div class="line">	server_name react.nullcn.com;</div><div class="line">	location / &#123;</div><div class="line">		root /var/react;</div><div class="line">		try_files $uri uri/ /index.html;</div><div class="line">	&#125; </div><div class="line">	location ~ (.+)\.(html|json|txt|js|css|jpg|jpeg|gif|png|svg|ico|eot|otf|woff|woff2|ttf)$ &#123;</div><div class="line">		try_files $uri @rootfiles;</div><div class="line">	&#125;</div><div class="line">	location @rootfiles &#123;</div><div class="line">		root /var/react;</div><div class="line">		rewrite ^/(.*)/(.*) /$1 redirect;</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>通过 urlrewrite 将所有该二级域名请求的所有资源文件,路径等重写到index.html,将所有的请求统一交给 react-router 处理实际效果:<br><img src="https://ued.fanxing.com/content/images/2016/03/blog_react_router.gif" alt="实际效果"></p>
+<h1 id="tag组件与archive组件调整"><a href="#tag组件与archive组件调整" class="headerlink" title="tag组件与archive组件调整"></a>tag组件与archive组件调整</h1><p>看了实际效果或者用过类 router 组件之后,可以很清楚的看到,页面并没有跳转,所以肯定不会使用 &lt;a&gt; 标签,而是使用 react-router 自带的 &lt;Link&gt;标签. &lt;Link&gt; 在 react-router 内部负责通知 react-router 需要跳转的路由,再由指定的component渲染相应的组件.<br>使用 <link> 标签与使用其他 jsx 标签一样:<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//	~/assets/blog/js/TagList.js</span></div><div class="line">render()&#123;</div><div class="line">    <span class="keyword">if</span>(<span class="keyword">this</span>.state.loading)&#123;</div><div class="line">        <span class="keyword">return</span> <span class="xml"><span class="tag">&lt;<span class="name">span</span>&gt;</span>Loading...<span class="tag">&lt;/<span class="name">span</span>&gt;</span></span></div><div class="line">    &#125;<span class="keyword">else</span> <span class="keyword">if</span>(<span class="keyword">this</span>.state.error != <span class="literal">null</span>)&#123;</div><div class="line">      <span class="keyword">return</span> <span class="xml"><span class="tag">&lt;<span class="name">span</span>&gt;</span>Error:&#123;this.state.error.message&#125;<span class="tag">&lt;/<span class="name">span</span>&gt;</span></span></div><div class="line">    &#125;<span class="keyword">else</span>&#123;</div><div class="line">      <span class="keyword">var</span> tags = <span class="keyword">this</span>.state.data;</div><div class="line">      <span class="keyword">var</span> taglist = tags.map(<span class="function"><span class="keyword">function</span> (<span class="params">tag</span>) </span>&#123;</div><div class="line">        <span class="keyword">return</span> (</div><div class="line">          <span class="xml"><span class="tag">&lt;<span class="name">li</span> <span class="attr">className</span>=<span class="string">"tag-list-item"</span> <span class="attr">key</span>=<span class="string">&#123;tag.tag&#125;</span>&gt;</span> </span></div><div class="line">          	//<span class="tag">&lt;<span class="name">a</span> <span class="attr">className</span>=<span class="string">"tag-list-link"</span> <span class="attr">href</span>=<span class="string">&#123;</span>"/<span class="attr">tag</span>/"+<span class="attr">tag.tag</span>+"/"&#125;&gt;</span>&#123;tag.tagName&#125;<span class="tag">&lt;/<span class="name">a</span>&gt;</span>  原先是a标签</div><div class="line">            <span class="tag">&lt;<span class="name">Link</span> <span class="attr">className</span>=<span class="string">"tag-list-link"</span> <span class="attr">to</span>=<span class="string">&#123;</span>"/<span class="attr">tag</span>"+"/"+<span class="attr">tag.tag</span>+"/"&#125;&gt;</span>&#123;tag.tagName&#125;<span class="tag">&lt;/<span class="name">Link</span>&gt;</span></div><div class="line">          <span class="tag">&lt;/<span class="name">li</span>&gt;</span></div><div class="line">          );</div><div class="line">      &#125;);</div><div class="line">      <span class="keyword">return</span> (</div><div class="line">        <span class="xml"><span class="tag">&lt;<span class="name">ul</span> <span class="attr">className</span>=<span class="string">"tag-list"</span>&gt;</span></span></div><div class="line">          &#123;taglist&#125;</div><div class="line">        <span class="tag">&lt;/<span class="name">ul</span>&gt;</span></div><div class="line">      );</div><div class="line">    &#125;</div><div class="line">  &#125;</div></pre></td></tr></table></figure></p>
+<p>这里就不再介绍archive组件组件的调整了,大同小异.</p>
+<h1 id="下篇预告"><a href="#下篇预告" class="headerlink" title="下篇预告"></a>下篇预告</h1><p>Article组件与ArticleList组件:<br>根据不同的参数请求不同的接口(标签或归档)的数据,组织文章列表结构,渲染博客的主题部分(文章列表与分页),通知分页控件等.</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/javascript/" rel="tag"># javascript</a>
+          
+            <a href="/tags/nodejs/" rel="tag"># nodejs</a>
+          
+            <a href="/tags/ecmascript6/" rel="tag"># ecmascript6</a>
+          
+            <a href="/tags/react/" rel="tag"># react</a>
+          
+            <a href="/tags/reactrouter/" rel="tag"># reactrouter</a>
+          
+            <a href="/tags/webpack/" rel="tag"># webpack</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/03/blog-react-pagination/" rel="next" title="React版博客系列2--分页组件设计">
+                <i class="fa fa-chevron-left"></i> React版博客系列2--分页组件设计
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/05/blog-react-articleandarticlelist/" rel="prev" title="React版博客系列4--Article组件与ArticleList组件">
+                React版博客系列4--Article组件与ArticleList组件 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+          
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/03/blog-react-router/"
+           data-title="React版博客系列3--路由系统" data-url="https://yoursite.com/2016/03/blog-react-router/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/uploads/avatar.png"
+               alt="null -_-" />
+          <p class="site-author-name" itemprop="name">null -_-</p>
+          <p class="site-description motion-element" itemprop="description">浮世梦中梦 布衣才不才</p>
+        </div>
+        <nav class="site-state motion-element">
+        
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">33</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-categories">
+              
+                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-name">分类</span>
+              
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">33</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/mywei1989" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://git.oschina.net/mywei1989" target="_blank" title="GitOSC">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitOSC
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://twitter.com/mywei1989" target="_blank" title="Twitter">
+                  
+                    <i class="fa fa-fw fa-twitter"></i>
+                  
+                  Twitter
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://www.zhihu.com/people/lin-zhi-wei-92" target="_blank" title="zhihu">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  zhihu
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#系列链接"><span class="nav-number">1.</span> <span class="nav-text">系列链接:</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#先上demo"><span class="nav-number">2.</span> <span class="nav-text">先上demo</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#接上篇-react-router简介"><span class="nav-number">3.</span> <span class="nav-text">接上篇 react-router简介</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#嵌套关系"><span class="nav-number">3.1.</span> <span class="nav-text">嵌套关系</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#路径语法"><span class="nav-number">3.2.</span> <span class="nav-text">路径语法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#优先级"><span class="nav-number">3.3.</span> <span class="nav-text">优先级</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#关于History"><span class="nav-number">3.4.</span> <span class="nav-text">关于History</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#react-router本博客形态（SPA）的基石，可以想象成整个工程的构建骨架，数据流为"><span class="nav-number">3.5.</span> <span class="nav-text">react-router本博客形态（SPA）的基石，可以想象成整个工程的构建骨架，数据流为:</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参数传递"><span class="nav-number">3.6.</span> <span class="nav-text">参数传递</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#具体配置"><span class="nav-number">4.</span> <span class="nav-text">具体配置</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#tag组件与archive组件调整"><span class="nav-number">5.</span> <span class="nav-text">tag组件与archive组件调整</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#下篇预告"><span class="nav-number">6.</span> <span class="nav-text">下篇预告</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2012 - 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">null -_-</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.0"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"nullcn"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    
+    <script src="/lib/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+</body>
+</html>

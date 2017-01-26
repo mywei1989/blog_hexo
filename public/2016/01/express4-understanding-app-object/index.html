@@ -1,0 +1,777 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="nodejs,express,mvc,node," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="犹豫了好久,最终决定把express(4.13.3)写成一个系列，这样或许可以多拿点kpi。本人假设读者有一定nodejs基础并了解express的基本使用。无论如何，这里都先放上一个广告，本人博客，为何在群里宣传了这么久，star却并没有增加-_-。
+1.理解app在使用Express的时候，通常会以如下方式创建一个应用：123var express require(&apos;express&apos;);var">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Express(4+)框架浅析1 --[app对象]">
+<meta property="og:url" content="https://yoursite.com/2016/01/express4-understanding-app-object/index.html">
+<meta property="og:site_name" content="Null's Blog">
+<meta property="og:description" content="犹豫了好久,最终决定把express(4.13.3)写成一个系列，这样或许可以多拿点kpi。本人假设读者有一定nodejs基础并了解express的基本使用。无论如何，这里都先放上一个广告，本人博客，为何在群里宣传了这么久，star却并没有增加-_-。
+1.理解app在使用Express的时候，通常会以如下方式创建一个应用：123var express require(&apos;express&apos;);var">
+<meta property="og:updated_time" content="2017-01-26T13:00:07.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Express(4+)框架浅析1 --[app对象]">
+<meta name="twitter:description" content="犹豫了好久,最终决定把express(4.13.3)写成一个系列，这样或许可以多拿点kpi。本人假设读者有一定nodejs基础并了解express的基本使用。无论如何，这里都先放上一个广告，本人博客，为何在群里宣传了这么久，star却并没有增加-_-。
+1.理解app在使用Express的时候，通常会以如下方式创建一个应用：123var express require(&apos;express&apos;);var">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://yoursite.com/2016/01/express4-understanding-app-object/"/>
+
+
+
+
+
+  <title> Express(4+)框架浅析1 --[app对象] | Null's Blog </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?0b07173910630daf1ef8a0112517b498";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">Null's Blog</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+    
+      <p class="site-subtitle"></p>
+    
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+  <link itemprop="mainEntityOfPage" href="https://yoursite.com/2016/01/express4-understanding-app-object/">
+
+  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="null -_-">
+    <meta itemprop="description" content="">
+    <meta itemprop="image" content="/uploads/avatar.png">
+  </span>
+
+  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="name" content="Null's Blog">
+    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+      <img style="display:none;" itemprop="url image" alt="Null's Blog" src="">
+    </span>
+  </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Express(4+)框架浅析1 --[app对象]
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2016-01-30T17:21:09+08:00">
+                2016-01-30
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/javascript/" itemprop="url" rel="index">
+                    <span itemprop="name">javascript</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2016/01/express4-understanding-app-object/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/01/express4-understanding-app-object/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>犹豫了好久,最终决定把express(4.13.3)写成一个系列，这样或许可以多拿点kpi。本人假设读者有一定nodejs基础并了解express的基本使用。无论如何，这里都先放上一个广告，<a href="https://github.com/mywei1989/blog" target="_blank" rel="external">本人博客</a>，为何在群里宣传了这么久，star却并没有增加-_-。</p>
+<h1 id="1-理解app"><a href="#1-理解app" class="headerlink" title="1.理解app"></a>1.理解app</h1><p>在使用Express的时候，通常会以如下方式创建一个应用：<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> express <span class="built_in">require</span>(<span class="string">'express'</span>);</div><div class="line"><span class="keyword">var</span> app = express();</div><div class="line">app.listen(<span class="number">3000</span>);</div></pre></td></tr></table></figure></p>
+<p>在不使用express的情况下，是这样做的：<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> http = <span class="built_in">require</span>(<span class="string">'http'</span>);</div><div class="line">http.createServer(<span class="function"><span class="keyword">function</span>(<span class="params">req,res</span>)</span>&#123;</div><div class="line">  res.write(<span class="string">'Hello world!'</span>);</div><div class="line">  res.end</div><div class="line">&#125;).listen(<span class="number">3000</span>);</div></pre></td></tr></table></figure></p>
+<a id="more"></a>
+<p>通过源码，不难发现express其实是一个<strong>工厂函数</strong>,用来创建app:(express\lib\express.js)<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">createApplication</span>(<span class="params"></span>) </span>&#123;</div><div class="line">  <span class="keyword">var</span> app = <span class="function"><span class="keyword">function</span>(<span class="params">req, res, next</span>) </span>&#123;</div><div class="line">    app.handle(req, res, next);</div><div class="line">  &#125;;</div><div class="line"></div><div class="line">  mixin(app, EventEmitter.prototype, <span class="literal">false</span>);</div><div class="line">  mixin(app, proto, <span class="literal">false</span>);</div><div class="line"></div><div class="line">  app.request = &#123; <span class="attr">__proto__</span>: req, <span class="attr">app</span>: app &#125;;</div><div class="line">  app.response = &#123; <span class="attr">__proto__</span>: res, <span class="attr">app</span>: app &#125;;</div><div class="line">  app.init();</div><div class="line">  <span class="keyword">return</span> app;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>express\lib\application.js:<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">app.listen = <span class="function"><span class="keyword">function</span> <span class="title">listen</span>(<span class="params"></span>) </span>&#123;</div><div class="line">  <span class="keyword">var</span> server = http.createServer(<span class="keyword">this</span>);</div><div class="line">  <span class="keyword">return</span> server.listen.apply(server, <span class="built_in">arguments</span>);</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<p>因此，在使用express的时候，所有的请求都交给app.handle进行处理了，虽然router也有自己的处理逻辑，但也是可以看作app的一个小型示例，会有自己root节点，所以这里插播一条将来会讲到的router部分的内容：<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//匹配 localhost/</span></div><div class="line">app.get(<span class="string">'/'</span>,<span class="function"><span class="keyword">function</span>(<span class="params">req,req</span>)</span>&#123;&#125;);</div><div class="line"></div><div class="line"><span class="comment">//匹配localhost/list/  </span></div><div class="line">app.use(<span class="string">'/list'</span>, router);</div><div class="line">router.get(<span class="string">'/'</span>,<span class="function"><span class="keyword">function</span>(<span class="params">req,res</span>)</span>&#123;&#125;);</div></pre></td></tr></table></figure></p>
+<h1 id="2-模块依赖"><a href="#2-模块依赖" class="headerlink" title="2.模块依赖"></a>2.模块依赖</h1><p>虽然本人觉得这部分并不重要，但一开始即讲app内的方法，似乎有点突然，所以这里仅贴上源码的内容凑紫薯：<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> finalhandler = <span class="built_in">require</span>(<span class="string">'finalhandler'</span>);</div><div class="line"><span class="keyword">var</span> Router = <span class="built_in">require</span>(<span class="string">'./router'</span>);</div><div class="line"><span class="keyword">var</span> methods = <span class="built_in">require</span>(<span class="string">'methods'</span>);</div><div class="line"><span class="keyword">var</span> middleware = <span class="built_in">require</span>(<span class="string">'./middleware/init'</span>);</div><div class="line"><span class="keyword">var</span> query = <span class="built_in">require</span>(<span class="string">'./middleware/query'</span>);</div><div class="line"><span class="keyword">var</span> debug = <span class="built_in">require</span>(<span class="string">'debug'</span>)(<span class="string">'express:application'</span>);</div><div class="line"><span class="keyword">var</span> View = <span class="built_in">require</span>(<span class="string">'./view'</span>);</div><div class="line"><span class="keyword">var</span> http = <span class="built_in">require</span>(<span class="string">'http'</span>);</div><div class="line"><span class="keyword">var</span> compileETag = <span class="built_in">require</span>(<span class="string">'./utils'</span>).compileETag;</div><div class="line"><span class="keyword">var</span> compileQueryParser = <span class="built_in">require</span>(<span class="string">'./utils'</span>).compileQueryParser;</div><div class="line"><span class="keyword">var</span> compileTrust = <span class="built_in">require</span>(<span class="string">'./utils'</span>).compileTrust;</div><div class="line"><span class="keyword">var</span> deprecate = <span class="built_in">require</span>(<span class="string">'depd'</span>)(<span class="string">'express'</span>);</div><div class="line"><span class="keyword">var</span> flatten = <span class="built_in">require</span>(<span class="string">'array-flatten'</span>);</div><div class="line"><span class="keyword">var</span> merge = <span class="built_in">require</span>(<span class="string">'utils-merge'</span>);</div><div class="line"><span class="keyword">var</span> resolve = <span class="built_in">require</span>(<span class="string">'path'</span>).resolve;</div><div class="line"><span class="keyword">var</span> slice = <span class="built_in">Array</span>.prototype.slice;</div></pre></td></tr></table></figure></p>
+<h1 id="3-app初始化"><a href="#3-app初始化" class="headerlink" title="3.app初始化"></a>3.app初始化</h1><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> app = exports = <span class="built_in">module</span>.exports = &#123;&#125;;</div></pre></td></tr></table></figure>
+<p>导出一个对象字面量，这里没什么好说的，init方法会扩展这个对象：<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">app.init = <span class="function"><span class="keyword">function</span> <span class="title">init</span>(<span class="params"></span>) </span>&#123;</div><div class="line">  <span class="keyword">this</span>.cache = &#123;&#125;;</div><div class="line">  <span class="keyword">this</span>.engines = &#123;&#125;;</div><div class="line">  <span class="keyword">this</span>.settings = &#123;&#125;;</div><div class="line">  <span class="keyword">this</span>.defaultConfiguration();</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<p>通过源码可知，初始化cache，engines（模版引擎），settings之后，调用默认配置函数进行默认配置。</p>
+<h1 id="4-app-listen"><a href="#4-app-listen" class="headerlink" title="4.app.listen"></a>4.app.listen</h1><p>listen方法很简单，使用apply函数调用http模块：<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">app.listen = <span class="function"><span class="keyword">function</span> <span class="title">listen</span>(<span class="params"></span>) </span>&#123;</div><div class="line">  <span class="keyword">var</span> server = http.createServer(<span class="keyword">this</span>);</div><div class="line">  <span class="keyword">return</span> server.listen.apply(server, <span class="built_in">arguments</span>);</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<p>##5.setting<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line">app.set = <span class="function"><span class="keyword">function</span> <span class="title">set</span>(<span class="params">setting, val</span>) </span>&#123;</div><div class="line">  <span class="keyword">if</span> (<span class="built_in">arguments</span>.length === <span class="number">1</span>) &#123;</div><div class="line">    <span class="comment">// app.get(setting)</span></div><div class="line">    <span class="keyword">return</span> <span class="keyword">this</span>.settings[setting];</div><div class="line">  &#125;</div><div class="line">  debug(<span class="string">'set "%s" to %o'</span>, setting, val);</div><div class="line">  <span class="comment">// set value</span></div><div class="line">  <span class="keyword">this</span>.settings[setting] = val;</div><div class="line">  <span class="comment">// trigger matched settings</span></div><div class="line">  <span class="keyword">switch</span> (setting) &#123;</div><div class="line">    <span class="keyword">case</span> <span class="string">'etag'</span>:</div><div class="line">      <span class="keyword">this</span>.set(<span class="string">'etag fn'</span>, compileETag(val));</div><div class="line">      <span class="keyword">break</span>;</div><div class="line">    <span class="keyword">case</span> <span class="string">'query parser'</span>:</div><div class="line">      <span class="keyword">this</span>.set(<span class="string">'query parser fn'</span>, compileQueryParser(val));</div><div class="line">      <span class="keyword">break</span>;</div><div class="line">    <span class="keyword">case</span> <span class="string">'trust proxy'</span>:</div><div class="line">      <span class="keyword">this</span>.set(<span class="string">'trust proxy fn'</span>, compileTrust(val));</div><div class="line">      <span class="comment">// trust proxy inherit back-compat</span></div><div class="line">      <span class="built_in">Object</span>.defineProperty(<span class="keyword">this</span>.settings, trustProxyDefaultSymbol, &#123;</div><div class="line">        <span class="attr">configurable</span>: <span class="literal">true</span>,</div><div class="line">        <span class="attr">value</span>: <span class="literal">false</span></div><div class="line">      &#125;);</div><div class="line">      <span class="keyword">break</span>;</div><div class="line">  &#125;</div><div class="line">  <span class="keyword">return</span> <span class="keyword">this</span>;</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<p>很好理解，根据<figure class="highlight plain"><figcaption><span>parser```，```trust proxy```时，会进行额外的设置。</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div></pre></td><td class="code"><pre><div class="line"># 6.默认配置 defaultConfiguration</div><div class="line">刚才说过，在执行init的时候会进行默认配置```defaultConfiguration```：</div><div class="line">```javascript</div><div class="line">app.defaultConfiguration = function defaultConfiguration() &#123;</div><div class="line">  var env = process.env.NODE_ENV || &apos;development&apos;;</div><div class="line"></div><div class="line">  // default settings</div><div class="line">  this.enable(&apos;x-powered-by&apos;);</div><div class="line">  this.set(&apos;etag&apos;, &apos;weak&apos;);</div><div class="line">  this.set(&apos;env&apos;, env);</div><div class="line">  this.set(&apos;query parser&apos;, &apos;extended&apos;);</div><div class="line">  this.set(&apos;subdomain offset&apos;, 2);</div><div class="line">  this.set(&apos;trust proxy&apos;, false);</div><div class="line">  // trust proxy inherit back-compat</div><div class="line">  Object.defineProperty(this.settings, trustProxyDefaultSymbol, &#123;</div><div class="line">    configurable: true,</div><div class="line">    value: true</div><div class="line">  &#125;);</div><div class="line">  debug(&apos;booting in %s mode&apos;, env);</div><div class="line">  this.on(&apos;mount&apos;, function onmount(parent) &#123;</div><div class="line">    // inherit trust proxy</div><div class="line">    if (this.settings[trustProxyDefaultSymbol] === true</div><div class="line">      &amp;&amp; typeof parent.settings[&apos;trust proxy fn&apos;] === &apos;function&apos;) &#123;</div><div class="line">      delete this.settings[&apos;trust proxy&apos;];</div><div class="line">      delete this.settings[&apos;trust proxy fn&apos;];</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    // inherit protos</div><div class="line">    this.request.__proto__ = parent.request;</div><div class="line">    this.response.__proto__ = parent.response;</div><div class="line">    this.engines.__proto__ = parent.engines;</div><div class="line">    this.settings.__proto__ = parent.settings;</div><div class="line">  &#125;);</div><div class="line">  // setup locals</div><div class="line">  this.locals = Object.create(null);</div><div class="line">  // top-most app is mounted at /</div><div class="line">  this.mountpath = &apos;/&apos;;</div><div class="line">  // default locals</div><div class="line">  this.locals.settings = this.settings;</div><div class="line">  // default configuration</div><div class="line">  this.set(&apos;view&apos;, View);</div><div class="line">  this.set(&apos;views&apos;, resolve(&apos;views&apos;));</div><div class="line">  this.set(&apos;jsonp callback name&apos;, &apos;callback&apos;);</div><div class="line">  if (env === &apos;production&apos;) &#123;</div><div class="line">    this.enable(&apos;view cache&apos;);</div><div class="line">  &#125;</div><div class="line">  Object.defineProperty(this, &apos;router&apos;, &#123;</div><div class="line">    get: function() &#123;</div><div class="line">      throw new Error(&apos;\&apos;app.router\&apos; is deprecated!\nPlease see the 3.x to 4.x migration guide for details on how to update your app.&apos;);</div><div class="line">    &#125;</div><div class="line">  &#125;);</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<p>这里做了几件事：<br>1.设置<code>x-powered-by</code>，<code>etag</code>，<code>env</code>，<code>query parser</code>，<code>subdomain offset</code>。<br>2.注册<code>mount</code>事件回调。<br>3.增加<code>this.locals(用于保存全局环境变量)</code>，<code>this.mountpath(保存当前挂载路径)</code>。<br>至此，express框架app的主要方法已经介绍完毕，其实express框架并不复杂，希望各位了解其原理之后可以在开发少跳坑，少挖坑，并且能在需要时快速开发出牛逼的插件。</p>
+<h1 id="7-下期预告-Express-4-框架浅析2-–-router-敬请期待"><a href="#7-下期预告-Express-4-框架浅析2-–-router-敬请期待" class="headerlink" title="7.下期预告:Express(4+)框架浅析2 –[router] 敬请期待"></a>7.下期预告:Express(4+)框架浅析2 –[router] 敬请期待</h1>
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/nodejs/" rel="tag"># nodejs</a>
+          
+            <a href="/tags/express/" rel="tag"># express</a>
+          
+            <a href="/tags/mvc/" rel="tag"># mvc</a>
+          
+            <a href="/tags/node/" rel="tag"># node</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2015/10/koa-comprehension/" rel="next" title="关于koa的初级见解">
+                <i class="fa fa-chevron-left"></i> 关于koa的初级见解
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/02/blog-react-basic/" rel="prev" title="React版博客系列1--基础说明与标签组件">
+                React版博客系列1--基础说明与标签组件 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+          
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/01/express4-understanding-app-object/"
+           data-title="Express(4+)框架浅析1 --[app对象]" data-url="https://yoursite.com/2016/01/express4-understanding-app-object/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/uploads/avatar.png"
+               alt="null -_-" />
+          <p class="site-author-name" itemprop="name">null -_-</p>
+          <p class="site-description motion-element" itemprop="description">浮世梦中梦 布衣才不才</p>
+        </div>
+        <nav class="site-state motion-element">
+        
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">33</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-categories">
+              
+                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-name">分类</span>
+              
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">33</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/mywei1989" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://git.oschina.net/mywei1989" target="_blank" title="GitOSC">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitOSC
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://twitter.com/mywei1989" target="_blank" title="Twitter">
+                  
+                    <i class="fa fa-fw fa-twitter"></i>
+                  
+                  Twitter
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://www.zhihu.com/people/lin-zhi-wei-92" target="_blank" title="zhihu">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  zhihu
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#1-理解app"><span class="nav-number">1.</span> <span class="nav-text">1.理解app</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2-模块依赖"><span class="nav-number">2.</span> <span class="nav-text">2.模块依赖</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#3-app初始化"><span class="nav-number">3.</span> <span class="nav-text">3.app初始化</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#4-app-listen"><span class="nav-number">4.</span> <span class="nav-text">4.app.listen</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#7-下期预告-Express-4-框架浅析2-–-router-敬请期待"><span class="nav-number">5.</span> <span class="nav-text">7.下期预告:Express(4+)框架浅析2 –[router] 敬请期待</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2012 - 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">null -_-</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.0"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"nullcn"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    
+    <script src="/lib/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+</body>
+</html>

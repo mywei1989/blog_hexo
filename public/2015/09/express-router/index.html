@@ -1,0 +1,766 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="nodejs,express,mvc," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="好久之前就用过express，其实也没那么久吧，转前端的时候用nodejs，就顺便写过几个helloworld了。还买了一本书，Node.js 实战，还好，这本书虽然内容跟XX天精通XX差不多，但至少它不标榜“XX天”，“精通”这些一看就让人受不了的标题。入门看这些还是挺好的，前端体系更新过快，快速学习，快速适应就是王道。不记得买了多久了，应该是一出就买了，听说这本书出的时候express即将更新">
+<meta property="og:type" content="article">
+<meta property="og:title" content="express中的路由">
+<meta property="og:url" content="https://yoursite.com/2015/09/express-router/index.html">
+<meta property="og:site_name" content="Null's Blog">
+<meta property="og:description" content="好久之前就用过express，其实也没那么久吧，转前端的时候用nodejs，就顺便写过几个helloworld了。还买了一本书，Node.js 实战，还好，这本书虽然内容跟XX天精通XX差不多，但至少它不标榜“XX天”，“精通”这些一看就让人受不了的标题。入门看这些还是挺好的，前端体系更新过快，快速学习，快速适应就是王道。不记得买了多久了，应该是一出就买了，听说这本书出的时候express即将更新">
+<meta property="og:updated_time" content="2017-01-26T13:02:16.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="express中的路由">
+<meta name="twitter:description" content="好久之前就用过express，其实也没那么久吧，转前端的时候用nodejs，就顺便写过几个helloworld了。还买了一本书，Node.js 实战，还好，这本书虽然内容跟XX天精通XX差不多，但至少它不标榜“XX天”，“精通”这些一看就让人受不了的标题。入门看这些还是挺好的，前端体系更新过快，快速学习，快速适应就是王道。不记得买了多久了，应该是一出就买了，听说这本书出的时候express即将更新">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://yoursite.com/2015/09/express-router/"/>
+
+
+
+
+
+  <title> express中的路由 | Null's Blog </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?0b07173910630daf1ef8a0112517b498";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">Null's Blog</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+    
+      <p class="site-subtitle"></p>
+    
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+  <link itemprop="mainEntityOfPage" href="https://yoursite.com/2015/09/express-router/">
+
+  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="null -_-">
+    <meta itemprop="description" content="">
+    <meta itemprop="image" content="/uploads/avatar.png">
+  </span>
+
+  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="name" content="Null's Blog">
+    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+      <img style="display:none;" itemprop="url image" alt="Null's Blog" src="">
+    </span>
+  </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                express中的路由
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2015-09-25T23:15:04+08:00">
+                2015-09-25
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/javascript/" itemprop="url" rel="index">
+                    <span itemprop="name">javascript</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2015/09/express-router/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2015/09/express-router/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>好久之前就用过express，其实也没那么久吧，转前端的时候用nodejs，就顺便写过几个helloworld了。<br>还买了一本书，<a href="http://book.douban.com/subject/25867920/" target="_blank" rel="external">Node.js 实战</a>，还好，这本书虽然内容跟XX天精通XX差不多，但至少它不标榜“XX天”，“精通”这些一看就让人受不了的标题。入门看这些还是挺好的，前端体系更新过快，快速学习，快速适应就是王道。<br>不记得买了多久了，应该是一出就买了，听说这本书出的时候express即将更新到4.0+版本了，也就是说，按照处女座的观点，该书一出就过时了。不知道现在是否出了新版。<br>书中前面一大段来至<a href="https://github.com/nswbmw/N-blog" target="_blank" rel="external">nswbmw的N-blog</a>，<a href="https://github.com/nswbmw/N-blog" target="_blank" rel="external">nswbmw的N-blog</a>即是引导我入门express的最好事例，没有之一。希望稿费能分nswbmw一部分吧。<br>废话不多说，言归正传。<br><strong>本文基于express4+版本进行记录</strong></p>
+<h2 id="路由"><a href="#路由" class="headerlink" title="路由"></a>路由</h2><p>路由是指如何定义应用的端点（URIs）以及如何响应客户端的请求。<br>路由是由一个 URI、HTTP 请求（GET、POST等）和若干个句柄组成，它的结构如下： app.METHOD(path, [callback…], callback)， app 是 express 对象的一个实例， METHOD 是一个 HTTP 请求方法， path 是服务器上的路径， callback 是当路由匹配时要执行的函数。<br>我们知道HTTP请求常用的只有两种，get和post，而路由作为响应请求的方法，也有对应的类型，当然，这里也仅讨论响应get和post请求的路由。<br>路由(功能)可以挂载到app实例上，路由(router)亦是一个完整的中间件和独立的系统，可以理解为小型的app实例。个人感觉express4允许这样做是一个多余的设计，express力求简单高效，没必要让同样的功能允许使用两种不同的方式去使用。<br>本博客目前全部将路由功能挂在至app实例上:<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//app.js</span></div><div class="line"><span class="keyword">var</span> list_routes = <span class="built_in">require</span>(<span class="string">'./routes/list'</span>);   <span class="comment">//列表</span></div><div class="line"><span class="keyword">var</span> article_routes = <span class="built_in">require</span>(<span class="string">'./routes/article'</span>); <span class="comment">//查看文章页</span></div><div class="line"><span class="keyword">var</span> login_routes = <span class="built_in">require</span>(<span class="string">'./routes/login'</span>); <span class="comment">//登录页</span></div><div class="line"><span class="keyword">var</span> post_routes = <span class="built_in">require</span>(<span class="string">'./routes/post'</span>); <span class="comment">//发表页</span></div></pre></td></tr></table></figure></p>
+<p>最后使用:<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//app.js</span></div><div class="line">list_routes(app);</div><div class="line">article_routes(app);</div><div class="line">login_routes(app);</div><div class="line">post_routes(app);</div></pre></td></tr></table></figure></p>
+<p>将实例传递至各自的路由模块中。<br>这里主要以列表模块进行说明<br>根据设计思路，列表页最终抽象出三大块路由组，分别对应博客列表的三块功能，普通列表，tag列表和archive列表。每个列表又包含分页，所以仅目前列表模块就挂载了13个响应方法，或者说句柄：<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div></pre></td><td class="code"><pre><div class="line"> app.get(<span class="string">'/'</span>,<span class="function"><span class="keyword">function</span>(<span class="params">req,res,next</span>)</span>&#123;</div><div class="line">     <span class="comment">//默认第1页</span></div><div class="line"> &#125;);</div><div class="line"></div><div class="line"> app.get(<span class="string">'/page'</span>,<span class="function"><span class="keyword">function</span>(<span class="params">req,res,next</span>)</span>&#123;</div><div class="line">   res.redirect(<span class="number">301</span>,<span class="string">'/page/1/'</span>);   <span class="comment">//当用户查看了http://www.nullcn.com/page 跳转到第1页</span></div><div class="line"> &#125;);</div><div class="line"> app.get(<span class="string">'/page/:page'</span>,<span class="function"><span class="keyword">function</span>(<span class="params">req,res,next</span>)</span>&#123;</div><div class="line">   res.redirect(<span class="number">301</span>,<span class="string">'/page/'</span>+req.params.page+<span class="string">'/'</span>);   <span class="comment">//http://www.nullcn.com/page/2 重定向至http://www.nullcn.com/page/2/</span></div><div class="line"> &#125;);</div><div class="line"> app.get(<span class="string">'/page/:page/'</span>,<span class="function"><span class="keyword">function</span>(<span class="params">req,res,next</span>)</span>&#123;</div><div class="line">     <span class="comment">//真正处理分页的功能代码</span></div><div class="line"> &#125;);</div><div class="line"><span class="comment">/*后面部分跟普通分页思路类似 就不再做解释说明了*/</span></div><div class="line"> app.get(<span class="string">'/tag/:tag'</span>,<span class="function"><span class="keyword">function</span>(<span class="params">req,res,next</span>)</span>&#123;</div><div class="line">   res.redirect(<span class="number">301</span>,<span class="string">'/tag/'</span>+req.params.tag+<span class="string">'/'</span>);</div><div class="line"> &#125;);</div><div class="line"> app.get(<span class="string">'/tag/:tag/'</span>,<span class="function"><span class="keyword">function</span>(<span class="params">req,res,next</span>)</span>&#123;</div><div class="line">   </div><div class="line"> &#125;);</div><div class="line"> app.get(<span class="string">'/tag/:tag/page/:page'</span>,<span class="function"><span class="keyword">function</span>(<span class="params">req,res,next</span>)</span>&#123;</div><div class="line">   res.redirect(<span class="number">301</span>,<span class="string">'/tag/'</span>+req.params.tag+<span class="string">'/page/'</span>+req.params.page+<span class="string">'/'</span>);</div><div class="line"> &#125;);</div><div class="line"> app.get(<span class="string">'/tag/:tag/page/:page/'</span>,<span class="function"><span class="keyword">function</span>(<span class="params">req,res,next</span>)</span>&#123;</div><div class="line"></div><div class="line"> &#125;);</div><div class="line"></div><div class="line"> app.get(<span class="string">'/:year/:month'</span>,<span class="function"><span class="keyword">function</span>(<span class="params">req,res,next</span>)</span>&#123;</div><div class="line">   res.redirect(<span class="number">301</span>,<span class="string">'/'</span>+req.params.year+<span class="string">'/'</span>+req.params.month+<span class="string">'/'</span>);</div><div class="line"> &#125;);</div><div class="line"> app.get(<span class="string">'/:year/:month/'</span>,<span class="function"><span class="keyword">function</span>(<span class="params">req,res,next</span>)</span>&#123;</div><div class="line">   </div><div class="line"> &#125;);</div><div class="line"> app.get(<span class="string">'/:year/:month/page'</span>,<span class="function"><span class="keyword">function</span>(<span class="params">req,res,next</span>)</span>&#123;</div><div class="line">   res.redirect(<span class="number">301</span>,<span class="string">'/'</span>+req.params.year+<span class="string">'/'</span>+req.params.month+<span class="string">'/page/1/'</span>);</div><div class="line"> &#125;);</div><div class="line"> app.get(<span class="string">'/:year/:month/page/:page'</span>,<span class="function"><span class="keyword">function</span>(<span class="params">req,res,next</span>)</span>&#123;</div><div class="line">   res.redirect(<span class="number">301</span>,<span class="string">'/'</span>+req.params.year+<span class="string">'/'</span>+req.params.month+<span class="string">'/page/'</span>+req.params.page+<span class="string">'/'</span>);</div><div class="line"> &#125;);</div><div class="line"> app.get(<span class="string">'/:year/:month/page/:page/'</span>,<span class="function"><span class="keyword">function</span>(<span class="params">req,res,next</span>)</span>&#123;</div><div class="line">   </div><div class="line"> &#125;);</div></pre></td></tr></table></figure></p>
+<p><strong>注意:默认情况下，<a href="http://www.nullcn.com/page/2与http://www.nullcn.com/page/2/" target="_blank" rel="external">http://www.nullcn.com/page/2与http://www.nullcn.com/page/2/</a> express4会认为是同一个路由，但是，熟悉mvc url与uri概念的人应该知道，这两个地址所表达的东西是不同的，所以要通过如下代码，让express区分这两者,并特别注意，需要在app实例挂载某些中间件之前执行，否则无效（坑了我两小时，我会说？）：</strong><br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//app.js</span></div><div class="line"><span class="comment">//  区分  /page/2  与  /page/2/ 的区别 并且该行不能在任何中间件之后 否则无效</span></div><div class="line">app.enable(<span class="string">'strict routing'</span>);</div><div class="line"><span class="comment">//app.set('strict routing',true);   //同上</span></div><div class="line"><span class="comment">//console.log(app.enabled('strict routing'));</span></div></pre></td></tr></table></figure></p>
+<p><strong>之后,即可以通过:</strong><br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">app.get(<span class="string">'/page'</span>,<span class="function"><span class="keyword">function</span>(<span class="params">req,res,next</span>)</span>&#123;</div><div class="line">  res.redirect(<span class="number">301</span>,<span class="string">'/page/1/'</span>);   <span class="comment">//当用户查看了http://www.nullcn.com/page 跳转到第1页</span></div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
+<p><strong>防止用户手贱删个斜杠，导致无法正常处理的问题。</strong></p>
+<p>代码中的req与res这里就不在详细说明，只再说下next的功能。<br>next用于将请求传递至下一个处理句柄。<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">app.param(<span class="string">'id'</span>, <span class="function"><span class="keyword">function</span> (<span class="params">req, res, next, id</span>) </span>&#123;</div><div class="line">  <span class="built_in">console</span>.log(<span class="string">'CALLED ONLY ONCE'</span>);</div><div class="line">  next();</div><div class="line">&#125;)</div><div class="line">app.get(<span class="string">'/user/:id'</span>, <span class="function"><span class="keyword">function</span> (<span class="params">req, res, next</span>) </span>&#123;</div><div class="line">  <span class="built_in">console</span>.log(<span class="string">'although this matches'</span>);</div><div class="line">  next();</div><div class="line">&#125;);</div><div class="line">app.get(<span class="string">'/user/:id'</span>, <span class="function"><span class="keyword">function</span> (<span class="params">req, res</span>) </span>&#123;</div><div class="line">  <span class="built_in">console</span>.log(<span class="string">'and this matches too'</span>);</div><div class="line">  res.end();</div><div class="line">&#125;);</div><div class="line"><span class="comment">//最终输入如下:</span></div><div class="line"><span class="comment">//CALLED ONLY ONCE</span></div><div class="line"><span class="comment">//although this matches</span></div><div class="line"><span class="comment">//and this matches too</span></div></pre></td></tr></table></figure></p>
+<p>由此我个人判断，可以应用至404统一跳转，权限统一验证等等地方。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/nodejs/" rel="tag"># nodejs</a>
+          
+            <a href="/tags/express/" rel="tag"># express</a>
+          
+            <a href="/tags/mvc/" rel="tag"># mvc</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2015/08/javascript-tinyslider/" rel="next" title="移动端slider的实现">
+                <i class="fa fa-chevron-left"></i> 移动端slider的实现
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2015/09/express-router2/" rel="prev" title="express中的路由2">
+                express中的路由2 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+          
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2015/09/express-router/"
+           data-title="express中的路由" data-url="https://yoursite.com/2015/09/express-router/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/uploads/avatar.png"
+               alt="null -_-" />
+          <p class="site-author-name" itemprop="name">null -_-</p>
+          <p class="site-description motion-element" itemprop="description">浮世梦中梦 布衣才不才</p>
+        </div>
+        <nav class="site-state motion-element">
+        
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">33</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-categories">
+              
+                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-name">分类</span>
+              
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">33</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/mywei1989" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://git.oschina.net/mywei1989" target="_blank" title="GitOSC">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitOSC
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://twitter.com/mywei1989" target="_blank" title="Twitter">
+                  
+                    <i class="fa fa-fw fa-twitter"></i>
+                  
+                  Twitter
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://www.zhihu.com/people/lin-zhi-wei-92" target="_blank" title="zhihu">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  zhihu
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#路由"><span class="nav-number">1.</span> <span class="nav-text">路由</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2012 - 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">null -_-</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.0"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"nullcn"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    
+    <script src="/lib/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+</body>
+</html>
